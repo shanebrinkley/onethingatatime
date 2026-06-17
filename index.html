@@ -36,7 +36,7 @@
   .brand .dot { color: var(--accent); }
 
   /* big rotating hero */
-  .bighero { margin: 64px 0 56px; }
+  .bighero { margin: 64px 0 56px; position: relative; }
   .pill {
     display: inline-flex; align-items: center; gap: 8px;
     background: var(--card); border: 1px solid rgba(255,255,255,0.1);
@@ -52,6 +52,16 @@
   .rotate-word.out { animation: wordOut 0.55s cubic-bezier(0.5, 0, 0.9, 0.25) forwards; }
   @keyframes wordIn { from { opacity: 0; transform: translateX(-45px) skewX(-6deg); } to { opacity: 1; transform: translateX(0) skewX(0); } }
   @keyframes wordOut { from { opacity: 1; transform: translateX(0) skewX(0); } to { opacity: 0; transform: translateX(110vw) skewX(12deg); } }
+
+  /* exhaust/dust particles */
+  .dust {
+    position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+    will-change: transform, opacity;
+  }
+  @keyframes puff {
+    from { opacity: 0.55; transform: translate(0,0) scale(1); }
+    to   { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(var(--ds)); }
+  }
 
   /* mechanic intro */
   .intro h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: -0.8px; }
@@ -120,7 +130,6 @@
     <div class="brand">onethingatatime<span class="dot">.ai</span></div>
 
     <div class="bighero">
-      <div class="pill"><span class="dot"></span> Breathe. You've got this.</div>
       <h1>When <span class="rotator"><span class="rotate-word grad">life</span></span><br>gets crazy, just remember:<br><span class="grad">one thing at a time.</span></h1>
       <p class="sub">Some days the to-do list runs the show. These are simple tools that hand you back the reins — one thing at a time — so you stay organized, stay calm, and get to pick what actually matters.</p>
     </div>
@@ -150,8 +159,51 @@
   const words = ["life", "work", "your inbox", "money", "school", "tax season"];
   let wi = 0;
   const rw = document.querySelector('.rotate-word');
+  const dustColors = ['#22f08a', '#45d4ff', '#9fb6d6'];
+
+  function spawnDust(host, x, y) {
+    const d = document.createElement('span');
+    d.className = 'dust';
+    const size = 4 + Math.random() * 9;
+    d.style.width = size + 'px';
+    d.style.height = size + 'px';
+    d.style.left = x + 'px';
+    d.style.top = (y + (Math.random() - 0.5) * 10) + 'px';
+    d.style.background = dustColors[Math.floor(Math.random() * dustColors.length)];
+    // each shed particle drifts back-left and down, then fades where it was dropped
+    const dx = -(15 + Math.random() * 55);
+    const dy = (Math.random() * 40) + 6;
+    const ds = 0.2 + Math.random() * 0.5;
+    d.style.setProperty('--dx', dx + 'px');
+    d.style.setProperty('--dy', dy + 'px');
+    d.style.setProperty('--ds', ds);
+    const dur = 0.45 + Math.random() * 0.4;
+    d.style.animation = `puff ${dur}s ease-out forwards`;
+    host.appendChild(d);
+    setTimeout(() => d.remove(), dur * 1000 + 50);
+  }
+
+  // emit a trail at the word's bottom-left edge while it flies off-screen
+  function trailDust() {
+    const host = rw.closest('.bighero');
+    const hostRect = host.getBoundingClientRect();
+    const start = performance.now();
+    const duration = 550; // matches the fly-out animation
+    function frame(now) {
+      const t = now - start;
+      const rect = rw.getBoundingClientRect();
+      const x = rect.left - hostRect.left;                 // left (trailing) edge
+      const y = rect.top - hostRect.top + rect.height;     // bottom edge
+      // a few particles per frame for a dense plume
+      for (let i = 0; i < 2; i++) spawnDust(host, x, y);
+      if (t < duration) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
   setInterval(() => {
     rw.classList.add('out');
+    trailDust();
     setTimeout(() => {
       wi = (wi + 1) % words.length;
       rw.textContent = words[wi];
@@ -261,7 +313,7 @@
 
     projects.forEach(p => {
       const f = first.get(p.el), l = p.el.getBoundingClientRect();
-      const dx = f.left - l.left, dy = f.top - l.left;
+      const dx = f.left - l.left, dy = f.top - l.top;
       if (dx || dy) {
         p.el.style.transition = 'none';
         p.el.style.transform = `translate(${dx}px,${dy}px)`;
