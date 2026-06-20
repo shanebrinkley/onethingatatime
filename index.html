@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>onethingatatime.ai</title>
 <style>
   :root {
@@ -18,7 +18,14 @@
     --acc: #45d4ff;       /* light blue accent */
     --accent: #22f08a;    /* brand pop (green) */
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* ===== MOBILE: tap responsiveness (added 2026-06-19) ===== */
+  html, body { overscroll-behavior-y: none; }
+  button, a, .proj, .toggle, .dl-btn, .modal-close, .modal-dl-btn {
+    touch-action: manipulation;
+  }
+  /* ===== END MOBILE: tap responsiveness ===== */
+
   body {
     background: var(--bg);
     color: var(--ink);
@@ -82,7 +89,7 @@
   }
   .toggle.on { background: var(--ink); color: var(--bg); box-shadow: 3px 3px 0 var(--accent); }
   .toggle.on .box { background: var(--accent); border-color: var(--bg); }
-  .toggle.on .box::after { content: '✓'; position: absolute; inset: -4px 0 0 1px; font-size: 12px; color: var(--bg); font-weight: 900; }
+  .toggle.on .box::after { content: 'Ã¢ÂÂ'; position: absolute; inset: -4px 0 0 1px; font-size: 12px; color: var(--bg); font-weight: 900; }
   .toggle:active { transform: translate(1px,1px); }
 
   /* status line */
@@ -100,7 +107,9 @@
     display: flex; flex-direction: column;
   }
   .proj .ico { font-size: 1.6rem; }
-  .proj h3 { font-size: 1.15rem; font-weight: 800; margin: 10px 0 6px; letter-spacing: -0.3px; }
+  .proj-header { display: flex; align-items: center; gap: 12px; margin: 6px 0 8px; }
+  .proj-header .ico { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
+  .proj-header h3 { font-size: 1.15rem; font-weight: 800; margin: 0; letter-spacing: -0.3px; }
   .proj .desc { color: var(--muted); font-size: 0.9rem; flex-grow: 1; }
   .proj .reqs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
   .req {
@@ -119,11 +128,125 @@
 
   .proj.ready { border-color: var(--go); box-shadow: 4px 4px 0 var(--go); }
   .proj.locked { opacity: 0.5; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); border-color: var(--muted); }
-  .proj.locked:hover { opacity: 0.85; }
 
   footer { margin-top: 70px; color: var(--muted); font-size: 0.82rem; border-top: 2px solid var(--ink); padding-top: 18px; }
   footer span { color: var(--accent); font-weight: 700; }
+
+  /* download button per project */
+  .dl-btn {
+    margin-top: 12px; font-size: 0.72rem; font-weight: 700; padding: 6px 10px;
+    background: var(--bg); color: var(--acc); border: 1.5px solid var(--acc); border-radius: 0;
+    cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    transition: background 0.15s, color 0.15s; align-self: flex-start;
+  }
+  .dl-btn:active { transform: translate(1px,1px); }
+
+  /* updated line */
+  .updated { margin-top: 6px; font-size: 0.7rem; color: var(--muted); opacity: 0.7; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+
+
+  /* clickable card cursor */
+  .proj { cursor: pointer; }
+
+  /* modal backdrop + box */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(4,10,22,0.85);
+    display: none; align-items: flex-start; justify-content: center;
+    z-index: 1000; padding: 4vh 16px; overflow-y: auto;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-box {
+    background: var(--card); border: 2px solid var(--ink); border-radius: 0;
+    max-width: 720px; width: 100%; padding: 32px 28px; position: relative;
+    box-shadow: 6px 6px 0 var(--accent);
+    display: flex; flex-direction: column;
+  }
+  .modal-close {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--bg); color: var(--ink); border: 2px solid var(--ink);
+    width: 36px; height: 36px; cursor: pointer; font-weight: 900; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .modal-header { display: flex; align-items: center; gap: 16px; margin: 4px 0 16px; padding-right: 40px; }
+  .modal-header .ico { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
+  .modal-header h2 { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -0.5px; color: var(--ink); }
+  .modal-desc { color: var(--ink); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
+  .modal-images {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+  }
+  .modal-img {
+    aspect-ratio: 4 / 3; background: var(--bg2); border: 1.5px solid var(--muted);
+    position: relative; display: flex; align-items: center; justify-content: center;
+    background-image: linear-gradient(135deg, var(--bg2) 0%, var(--bg) 100%);
+    font-size: 1.8rem; color: var(--acc); overflow: hidden;
+  }
+  .modal-img-label {
+    position: absolute; bottom: 6px; left: 8px;
+    font-size: 0.62rem; color: var(--muted); 
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; opacity: 0.85;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .modal-reqs-label {
+    font-size: 0.7rem; letter-spacing: 1.2px; text-transform: uppercase; 
+    color: var(--muted); font-weight: 700; margin-bottom: 8px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  .modal-reqs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
+  .modal-dl-btn {
+    margin-top: 4px; font-size: 0.8rem; font-weight: 700; padding: 10px 16px;
+    background: var(--acc); color: var(--bg); border: 1.5px solid var(--acc); border-radius: 0;
+    cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    align-self: flex-start; transition: background 0.15s, color 0.15s;
+  }
+  .modal-dl-btn:active { transform: translate(1px,1px); }
+  /* ===== MOBILE: layout tightening + fullscreen modal (added 2026-06-19) ===== */
+  @media (max-width: 600px) {
+    .shell { padding: 24px 16px 60px; }
+    .bighero { margin: 36px 0 36px; }
+    .bighero h1 { letter-spacing: -1.2px; }
+    .barlabel { margin: 24px 0 12px; }
+    .toggles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .toggle { min-height: 44px; padding: 10px 12px; justify-content: flex-start; font-size: 0.82rem; }
+    .grid { gap: 14px; }
+    .proj { padding: 18px; }
+    .proj-header h3 { font-size: 1.08rem; }
+    .modal-backdrop { padding: 0; align-items: stretch; }
+    .modal-box { min-height: 100dvh; max-width: 100vw; border: none; border-radius: 0; box-shadow: none; padding: 24px 18px; padding-top: max(24px, env(safe-area-inset-top)); padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+    .modal-images { grid-template-columns: 1fr; }
+    .modal-header h2 { font-size: 1.3rem; }
+    .modal-dl-btn { align-self: stretch; min-height: 48px; font-size: 0.85rem; }
+  }
+  /* ===== END MOBILE: layout tightening ===== */
+
+  /* ===== MOBILE: hover effects gated to real hover capability ===== */
+  @media (hover: hover) and (pointer: fine) {
+    .dl-btn:hover { background: var(--acc); color: var(--bg); }
+    .proj.locked:hover { opacity: 0.85; }
+    .modal-close:hover { background: var(--miss); color: var(--bg); border-color: var(--miss); }
+    .modal-dl-btn:hover { background: var(--bg); color: var(--acc); }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .proj:active { transform: translate(1px, 1px); }
+    .dl-btn:active, .modal-dl-btn:active { background: var(--bg); color: var(--acc); }
+  }
+  /* ===== END MOBILE: hover gating ===== */
+
+  /* ===== ACCESSIBILITY: honor prefers-reduced-motion ===== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .dust { display: none !important; }
+  }
+  /* ===== END ACCESSIBILITY ===== */
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
 <body>
   <div class="shell">
@@ -131,12 +254,12 @@
 
     <div class="bighero">
       <h1>When <span class="rotator"><span class="rotate-word grad">life</span></span><br>gets crazy, just remember:<br><span class="grad">one thing at a time.</span></h1>
-      <p class="sub">Some days the to-do list runs the show. These are simple tools that hand you back the reins — one thing at a time — so you stay organized, stay calm, and get to pick what actually matters.</p>
+      <p class="sub">When everything competes for attention, it's easy to feel stuck. OneThingAtATime.ai helps you manage the unmanageable.</p>
     </div>
 
     <div class="intro">
-      <h2>Tell us what you've got. We'll show you what you can <u>build</u>.</h2>
-      <p>Tick the tools and accounts you already have. The projects you can run light up and rise to the top — everything else grays out and tells you exactly what's missing.</p>
+      <h2>Tell me what you have. I'll show you what's <u>possible</u>.</h2>
+      <p>Check off the tools, software, and accounts you're already using. I'll highlight the projects you can launch today and identify what's needed to unlock the rest.</p>
     </div>
 
     <div class="barlabel mono">// What do you have?</div>
@@ -150,8 +273,29 @@
     <div class="grid" id="grid"></div>
 
     <footer>
-      Built by <span>[YOUR NAME]</span> — one thing at a time. &copy; 2026 onethingatatime.ai
+      Built by <span>Shane Brinkley</span> Ã¢ÂÂ one thing at a time. &copy; 2026 onethingatatime.ai
+      <div class="updated">Last updated: 6/19/26</div>
     </footer>
+  </div>
+
+
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal-box" id="modal-box">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-header">
+        <div class="ico" id="modal-ico"></div>
+        <h2 id="modal-name"></h2>
+      </div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="modal-images">
+        <div class="modal-img"><span id="modal-img-1">&#128247;</span><span class="modal-img-label">Example 1</span></div>
+        <div class="modal-img"><span id="modal-img-2">&#9889;</span><span class="modal-img-label">Workflow</span></div>
+        <div class="modal-img"><span id="modal-img-3">&#128202;</span><span class="modal-img-label">Output</span></div>
+      </div>
+      <div class="modal-reqs-label">// Required tools</div>
+      <div class="modal-reqs" id="modal-reqs"></div>
+      <button class="modal-dl-btn" id="modal-dl">Download starter ZIP</button>
+    </div>
   </div>
 
 <script>
@@ -228,16 +372,16 @@
   ];
   const capLabel = Object.fromEntries(capabilities.map(c => [c.id, c.label]));
 
-  // ===== 8 sample projects with their required tools =====
+  // ===== 9 sample projects with their required tools =====
   const projects = [
-    { ico:'🎙️', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you — built on modular templates you control.', req:['claude','plaud','gmail'] },
-    { ico:'💬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'] },
-    { ico:'📥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'] },
-    { ico:'🕸️', name:'Always-On Scraper', desc:'Runs around the clock on your own machine, collecting what you tell it to.', req:['minipc','claude'] },
-    { ico:'📝', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap — same swappable templates.', req:['claude','readai','gmail'] },
-    { ico:'🗂️', name:'Auto-File Organizer', desc:'Watches a folder and sorts new files into place automatically.', req:['gdrive','minipc'] },
-    { ico:'🏠', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'] },
-    { ico:'📆', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gdrive','zapier'] },
+    { ico:'Ã°ÂÂÂÃ¯Â¸Â', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you Ã¢ÂÂ built on modular templates you control.', req:['claude','plaud','gmail'] },
+    { ico:'Ã°ÂÂÂ¬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'] },
+    { ico:'Ã°ÂÂÂ¥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'] },
+    { ico:'Ã°ÂÂÂ¸Ã¯Â¸Â', name:'Always-On Scraper', desc:'Runs around the clock on your own machine, collecting what you tell it to.', req:['minipc','claude'] },
+    { ico:'Ã°ÂÂÂ', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap Ã¢ÂÂ same swappable templates.', req:['claude','readai','gmail'] },
+    { ico:'Ã°ÂÂÂÃ¯Â¸Â', name:'Auto-File Organizer', desc:'Watches a folder and sorts new files into place automatically.', req:['gdrive','minipc'] },
+    { ico:'Ã°ÂÂÂ ', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'] },
+    { ico:'Ã°ÂÂÂ', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gdrive','zapier'] },
   ];
   projects.forEach((p,i) => p.idx = i);
 
@@ -262,12 +406,39 @@
     el.className = 'proj';
     el.innerHTML = `
       <div class="stamp"></div>
-      <div class="ico">${p.ico}</div>
-      <h3>${p.name}</h3>
+      <div class="proj-header">
+        <div class="ico">${p.ico}</div>
+        <h3>${p.name}</h3>
+      </div>
       <div class="desc">${p.desc}</div>
-      <div class="reqs"></div>`;
+      <div class="reqs"></div>
+      <button class="dl-btn" data-idx="${p.idx}">Download starter ZIP</button>`;
     p.el = el;
     grid.appendChild(el);
+  });
+
+  // ===== download handler (placeholder ZIPs for now) =====
+  async function downloadProject(p) {
+    const zip = new JSZip();
+    const placeholder = `${p.name}\n\nSomething cool coming soon.\n\nThis is a placeholder for the ${p.name} project starter kit. Real templates, scripts, and setup docs will land here.\n\nVisit https://onethingatatime.ai for updates.\n`;
+    zip.file('README.txt', placeholder);
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = p.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() + '.zip';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+  }
+
+  // attach download click handlers after projects are rendered
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.dl-btn')) {
+      const idx = parseInt(e.target.getAttribute('data-idx'), 10);
+      const proj = projects[idx];
+      if (proj) downloadProject(proj);
+    }
   });
 
   function statusOf(p) {
@@ -307,22 +478,85 @@
     document.getElementById('readyCount').textContent = readyN;
     const hint = document.getElementById('hint');
     if (selected.size === 0) hint.textContent = 'Select your tools above to unlock projects.';
-    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet — add another tool.';
+    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet Ã¢ÂÂ add another tool.';
     else hint.textContent = 'These are ready to run with what you have.';
 
-    projects.forEach(p => {
-      const f = first.get(p.el), l = p.el.getBoundingClientRect();
-      const dx = f.left - l.left, dy = f.top - l.top;
-      if (dx || dy) {
-        p.el.style.transition = 'none';
-        p.el.style.transform = `translate(${dx}px,${dy}px)`;
-        requestAnimationFrame(() => {
-          p.el.style.transition = 'transform 0.5s cubic-bezier(0.2,0.8,0.2,1)';
-          p.el.style.transform = '';
-        });
-      }
-    });
+    // FLIP animation only on desktop -- on mobile cards just snap into place
+    if (window.matchMedia('(min-width: 601px) and (hover: hover)').matches) {
+      projects.forEach(p => {
+        const f = first.get(p.el), l = p.el.getBoundingClientRect();
+        const dx = f.left - l.left, dy = f.top - l.top;
+        if (dx || dy) {
+          p.el.style.transition = 'none';
+          p.el.style.transform = `translate(${dx}px,${dy}px)`;
+          requestAnimationFrame(() => {
+            p.el.style.transition = 'transform 0.5s cubic-bezier(0.2,0.8,0.2,1)';
+            p.el.style.transform = '';
+          });
+        }
+      });
+    }
   }
+
+
+  // ===== detail modal =====
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const modalEls = {
+    ico: document.getElementById('modal-ico'),
+    name: document.getElementById('modal-name'),
+    desc: document.getElementById('modal-desc'),
+    reqs: document.getElementById('modal-reqs'),
+    dl: document.getElementById('modal-dl'),
+    close: document.getElementById('modal-close'),
+  };
+  let modalProj = null;
+  function openModal(p) {
+    modalProj = p;
+    modalEls.ico.textContent = p.ico;
+    modalEls.name.textContent = p.name;
+    modalEls.desc.textContent = (p.longDesc || p.desc + ' Click download below to grab the starter kit. Detailed setup docs, example templates, and walkthrough videos will land in future versions of this project.');
+    modalEls.reqs.innerHTML = p.req.map(r => `<span class="req mono">${capLabel[r]}</span>`).join('');
+    modalBackdrop.classList.add('open');
+    lockBodyScroll();
+  }
+  function closeModal() {
+    modalBackdrop.classList.remove('open');
+    unlockBodyScroll();
+    modalProj = null;
+  }
+
+  // ===== iOS-safe body scroll lock (added 2026-06-19) =====
+  let __savedScrollY = 0;
+  function lockBodyScroll() {
+    __savedScrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${__savedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  }
+  function unlockBodyScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    window.scrollTo(0, __savedScrollY);
+  }
+  modalEls.close.onclick = closeModal;
+  modalEls.dl.onclick = () => { if (modalProj) downloadProject(modalProj); };
+  modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalBackdrop.classList.contains('open')) closeModal(); });
+
+  // Card click opens modal (skip if clicking the download button)
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.dl-btn') || e.target.closest('.modal-backdrop')) return;
+    const card = e.target.closest('.proj');
+    if (card) {
+      const proj = projects.find(p => p.el === card);
+      if (proj) openModal(proj);
+    }
+  });
 
   render();
 </script>
