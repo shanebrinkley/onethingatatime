@@ -100,7 +100,9 @@
     display: flex; flex-direction: column;
   }
   .proj .ico { font-size: 1.6rem; }
-  .proj h3 { font-size: 1.15rem; font-weight: 800; margin: 10px 0 6px; letter-spacing: -0.3px; }
+  .proj-header { display: flex; align-items: center; gap: 12px; margin: 6px 0 8px; }
+  .proj-header .ico { font-size: 1.6rem; flex-shrink: 0; line-height: 1; }
+  .proj-header h3 { font-size: 1.15rem; font-weight: 800; margin: 0; letter-spacing: -0.3px; }
   .proj .desc { color: var(--muted); font-size: 0.9rem; flex-grow: 1; }
   .proj .reqs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
   .req {
@@ -278,8 +280,10 @@
     el.className = 'proj';
     el.innerHTML = `
       <div class="stamp"></div>
-      <div class="ico">${p.ico}</div>
-      <h3>${p.name}</h3>
+      <div class="proj-header">
+        <div class="ico">${p.ico}</div>
+        <h3>${p.name}</h3>
+      </div>
       <div class="desc">${p.desc}</div>
       <div class="reqs"></div>
       <button class="dl-btn" data-idx="${p.idx}">Download starter ZIP</button>`;
