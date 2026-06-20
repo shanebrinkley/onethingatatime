@@ -89,7 +89,7 @@
   }
   .toggle.on { background: var(--ink); color: var(--bg); box-shadow: 3px 3px 0 var(--accent); }
   .toggle.on .box { background: var(--accent); border-color: var(--bg); }
-  .toggle.on .box::after { content: 'Ã¢ÂÂ'; position: absolute; inset: -4px 0 0 1px; font-size: 12px; color: var(--bg); font-weight: 900; }
+  .toggle.on .box::after { content: '✓'; position: absolute; inset: -4px 0 0 1px; font-size: 12px; color: var(--bg); font-weight: 900; }
   .toggle:active { transform: translate(1px,1px); }
 
   /* status line */
@@ -273,7 +273,7 @@
     <div class="grid" id="grid"></div>
 
     <footer>
-      Built by <span>Shane Brinkley</span> Ã¢ÂÂ one thing at a time. &copy; 2026 onethingatatime.ai
+      Built by <span>Shane Brinkley</span> — one thing at a time. &copy; 2026 onethingatatime.ai
       <div class="updated">Last updated: 6/19/26</div>
     </footer>
   </div>
@@ -374,14 +374,14 @@
 
   // ===== 9 sample projects with their required tools =====
   const projects = [
-    { ico:'Ã°ÂÂÂÃ¯Â¸Â', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you Ã¢ÂÂ built on modular templates you control.', req:['claude','plaud','gmail'] },
-    { ico:'Ã°ÂÂÂ¬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'] },
-    { ico:'Ã°ÂÂÂ¥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'] },
-    { ico:'Ã°ÂÂÂ¸Ã¯Â¸Â', name:'Always-On Scraper', desc:'Runs around the clock on your own machine, collecting what you tell it to.', req:['minipc','claude'] },
-    { ico:'Ã°ÂÂÂ', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap Ã¢ÂÂ same swappable templates.', req:['claude','readai','gmail'] },
-    { ico:'Ã°ÂÂÂÃ¯Â¸Â', name:'Auto-File Organizer', desc:'Watches a folder and sorts new files into place automatically.', req:['gdrive','minipc'] },
-    { ico:'Ã°ÂÂÂ ', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'] },
-    { ico:'Ã°ÂÂÂ', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gdrive','zapier'] },
+    { ico:'🎙️', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you — built on modular templates you control.', req:['claude','plaud','gmail'] },
+    { ico:'💬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'] },
+    { ico:'📥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'] },
+    { ico:'🕸️', name:'Always-On Scraper', desc:'Runs around the clock on your own machine, collecting what you tell it to.', req:['minipc','claude'] },
+    { ico:'📝', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap — same swappable templates.', req:['claude','readai','gmail'] },
+    { ico:'🗂️', name:'Auto-File Organizer', desc:'Watches a folder and sorts new files into place automatically.', req:['gdrive','minipc'] },
+    { ico:'🏠', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'] },
+    { ico:'📆', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gdrive','zapier'] },
   ];
   projects.forEach((p,i) => p.idx = i);
 
@@ -478,7 +478,7 @@
     document.getElementById('readyCount').textContent = readyN;
     const hint = document.getElementById('hint');
     if (selected.size === 0) hint.textContent = 'Select your tools above to unlock projects.';
-    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet Ã¢ÂÂ add another tool.';
+    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet — add another tool.';
     else hint.textContent = 'These are ready to run with what you have.';
 
     // FLIP animation only on desktop -- on mobile cards just snap into place
