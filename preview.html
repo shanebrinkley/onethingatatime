@@ -89,7 +89,7 @@
   }
   .toggle.on { background: var(--ink); color: var(--bg); box-shadow: 3px 3px 0 var(--accent); }
   .toggle.on .box { background: var(--accent); border-color: var(--bg); }
-  .toggle.on .box::after { content: '✓'; position: absolute; inset: -4px 0 0 1px; font-size: 12px; color: var(--bg); font-weight: 900; }
+  .toggle.on .box::after { content: 'â'; position: absolute; inset: -4px 0 0 1px; font-size: 12px; color: var(--bg); font-weight: 900; }
   .toggle:active { transform: translate(1px,1px); }
 
   /* status line */
@@ -254,7 +254,7 @@
 
     <div class="bighero">
       <h1>When <span class="rotator"><span class="rotate-word grad">life</span></span><br>gets crazy, just remember:<br><span class="grad">one thing at a time.</span></h1>
-      <p class="sub">When work, life, and ideas all compete for attention, it's easy to feel stuck. OneThingAtATime.ai helps you break things down into something manageable.</p>
+      <p class="sub">When everything competes for attention, it's easy to feel stuck. OneThingAtATime.ai helps you manage the unmanageable.</p>
     </div>
 
     <div class="intro">
@@ -273,7 +273,7 @@
     <div class="grid" id="grid"></div>
 
     <footer>
-      Built by <span>Shane Brinkley</span> — one thing at a time. &copy; 2026 onethingatatime.ai
+      Built by <span>Shane Brinkley</span> â one thing at a time. &copy; 2026 onethingatatime.ai
       <div class="updated">Last updated: 6/19/26</div>
     </footer>
   </div>
@@ -374,14 +374,14 @@
 
   // ===== 9 sample projects with their required tools =====
   const projects = [
-    { ico:'🎙️', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you — built on modular templates you control.', req:['claude','plaud','gmail'] },
-    { ico:'💬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'] },
-    { ico:'📥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'] },
-    { ico:'🕸️', name:'Always-On Scraper', desc:'Runs around the clock on your own machine, collecting what you tell it to.', req:['minipc','claude'] },
-    { ico:'📝', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap — same swappable templates.', req:['claude','readai','gmail'] },
-    { ico:'🗂️', name:'Auto-File Organizer', desc:'Watches a folder and sorts new files into place automatically.', req:['gdrive','minipc'] },
-    { ico:'🏠', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'] },
-    { ico:'📆', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gdrive','zapier'] },
+    { ico:'ðï¸', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you â built on modular templates you control.', req:['claude','plaud','gmail'] },
+    { ico:'ð¬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'] },
+    { ico:'ð¥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'] },
+    { ico:'ð¸ï¸', name:'Always-On Scraper', desc:'Runs around the clock on your own machine, collecting what you tell it to.', req:['minipc','claude'] },
+    { ico:'ð', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap â same swappable templates.', req:['claude','readai','gmail'] },
+    { ico:'ðï¸', name:'Auto-File Organizer', desc:'Watches a folder and sorts new files into place automatically.', req:['gdrive','minipc'] },
+    { ico:'ð ', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'] },
+    { ico:'ð', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gdrive','zapier'] },
   ];
   projects.forEach((p,i) => p.idx = i);
 
@@ -478,7 +478,7 @@
     document.getElementById('readyCount').textContent = readyN;
     const hint = document.getElementById('hint');
     if (selected.size === 0) hint.textContent = 'Select your tools above to unlock projects.';
-    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet — add another tool.';
+    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet â add another tool.';
     else hint.textContent = 'These are ready to run with what you have.';
 
     // FLIP animation only on desktop -- on mobile cards just snap into place
