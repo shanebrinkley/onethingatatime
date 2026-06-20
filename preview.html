@@ -139,6 +139,71 @@
   /* updated line */
   .updated { margin-top: 6px; font-size: 0.7rem; color: var(--muted); opacity: 0.7; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
 
+
+  /* clickable card cursor */
+  .proj { cursor: pointer; }
+
+  /* modal backdrop + box */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(4,10,22,0.85);
+    display: none; align-items: flex-start; justify-content: center;
+    z-index: 1000; padding: 4vh 16px; overflow-y: auto;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-box {
+    background: var(--card); border: 2px solid var(--ink); border-radius: 0;
+    max-width: 720px; width: 100%; padding: 32px 28px; position: relative;
+    box-shadow: 6px 6px 0 var(--accent);
+    display: flex; flex-direction: column;
+  }
+  .modal-close {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--bg); color: var(--ink); border: 2px solid var(--ink);
+    width: 36px; height: 36px; cursor: pointer; font-weight: 900; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .modal-close:hover { background: var(--miss); color: var(--bg); border-color: var(--miss); }
+  .modal-header { display: flex; align-items: center; gap: 16px; margin: 4px 0 16px; padding-right: 40px; }
+  .modal-header .ico { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
+  .modal-header h2 { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -0.5px; color: var(--ink); }
+  .modal-desc { color: var(--ink); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
+  .modal-images {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+  }
+  .modal-img {
+    aspect-ratio: 4 / 3; background: var(--bg2); border: 1.5px solid var(--muted);
+    position: relative; display: flex; align-items: center; justify-content: center;
+    background-image: linear-gradient(135deg, var(--bg2) 0%, var(--bg) 100%);
+    font-size: 1.8rem; color: var(--acc); overflow: hidden;
+  }
+  .modal-img-label {
+    position: absolute; bottom: 6px; left: 8px;
+    font-size: 0.62rem; color: var(--muted); 
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; opacity: 0.85;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .modal-reqs-label {
+    font-size: 0.7rem; letter-spacing: 1.2px; text-transform: uppercase; 
+    color: var(--muted); font-weight: 700; margin-bottom: 8px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  .modal-reqs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
+  .modal-dl-btn {
+    margin-top: 4px; font-size: 0.8rem; font-weight: 700; padding: 10px 16px;
+    background: var(--acc); color: var(--bg); border: 1.5px solid var(--acc); border-radius: 0;
+    cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    align-self: flex-start; transition: background 0.15s, color 0.15s;
+  }
+  .modal-dl-btn:hover { background: var(--bg); color: var(--acc); }
+  .modal-dl-btn:active { transform: translate(1px,1px); }
+  @media (max-width: 600px) {
+    .modal-images { grid-template-columns: 1fr; }
+    .modal-box { padding: 28px 20px; }
+    .modal-header h2 { font-size: 1.3rem; }
+  }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
@@ -148,12 +213,12 @@
 
     <div class="bighero">
       <h1>When <span class="rotator"><span class="rotate-word grad">life</span></span><br>gets crazy, just remember:<br><span class="grad">one thing at a time.</span></h1>
-      <p class="sub">Some days the to-do list runs the show. These are simple tools that hand you back the reins — one thing at a time — so you stay organized, stay calm, and get to pick what actually matters.</p>
+      <p class="sub">When work, life, and ideas all compete for attention, it's easy to feel stuck. OneThingAtATime.ai helps you break things down into something manageable.</p>
     </div>
 
     <div class="intro">
-      <h2>Tell us what you've got. We'll show you what you can <u>build</u>.</h2>
-      <p>Tick the tools and accounts you already have. The projects you can run light up and rise to the top — everything else grays out and tells you exactly what's missing.</p>
+      <h2>Tell me what you have. I'll show you what's <u>possible</u>.</h2>
+      <p>Check off the tools, software, and accounts you're already using. I'll highlight the projects you can launch today and identify what's needed to unlock the rest.</p>
     </div>
 
     <div class="barlabel mono">// What do you have?</div>
@@ -170,6 +235,26 @@
       Built by <span>Shane Brinkley</span> — one thing at a time. &copy; 2026 onethingatatime.ai
       <div class="updated">Last updated: 6/19/26</div>
     </footer>
+  </div>
+
+
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal-box" id="modal-box">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-header">
+        <div class="ico" id="modal-ico"></div>
+        <h2 id="modal-name"></h2>
+      </div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="modal-images">
+        <div class="modal-img"><span id="modal-img-1">&#128247;</span><span class="modal-img-label">Example 1</span></div>
+        <div class="modal-img"><span id="modal-img-2">&#9889;</span><span class="modal-img-label">Workflow</span></div>
+        <div class="modal-img"><span id="modal-img-3">&#128202;</span><span class="modal-img-label">Output</span></div>
+      </div>
+      <div class="modal-reqs-label">// Required tools</div>
+      <div class="modal-reqs" id="modal-reqs"></div>
+      <button class="modal-dl-btn" id="modal-dl">Download starter ZIP</button>
+    </div>
   </div>
 
 <script>
@@ -246,7 +331,7 @@
   ];
   const capLabel = Object.fromEntries(capabilities.map(c => [c.id, c.label]));
 
-  // ===== 8 sample projects with their required tools =====
+  // ===== 9 sample projects with their required tools =====
   const projects = [
     { ico:'🎙️', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you — built on modular templates you control.', req:['claude','plaud','gmail'] },
     { ico:'💬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'] },
@@ -368,6 +453,47 @@
       }
     });
   }
+
+
+  // ===== detail modal =====
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const modalEls = {
+    ico: document.getElementById('modal-ico'),
+    name: document.getElementById('modal-name'),
+    desc: document.getElementById('modal-desc'),
+    reqs: document.getElementById('modal-reqs'),
+    dl: document.getElementById('modal-dl'),
+    close: document.getElementById('modal-close'),
+  };
+  let modalProj = null;
+  function openModal(p) {
+    modalProj = p;
+    modalEls.ico.textContent = p.ico;
+    modalEls.name.textContent = p.name;
+    modalEls.desc.textContent = (p.longDesc || p.desc + ' Click download below to grab the starter kit. Detailed setup docs, example templates, and walkthrough videos will land in future versions of this project.');
+    modalEls.reqs.innerHTML = p.req.map(r => `<span class="req mono">${capLabel[r]}</span>`).join('');
+    modalBackdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modalBackdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    modalProj = null;
+  }
+  modalEls.close.onclick = closeModal;
+  modalEls.dl.onclick = () => { if (modalProj) downloadProject(modalProj); };
+  modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalBackdrop.classList.contains('open')) closeModal(); });
+
+  // Card click opens modal (skip if clicking the download button)
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.dl-btn') || e.target.closest('.modal-backdrop')) return;
+    const card = e.target.closest('.proj');
+    if (card) {
+      const proj = projects.find(p => p.el === card);
+      if (proj) openModal(proj);
+    }
+  });
 
   render();
 </script>
