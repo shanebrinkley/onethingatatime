@@ -53,7 +53,7 @@
   }
   .mono { font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; }
 
-  .shell { max-width: 1080px; margin: 0 auto; padding: 38px 24px 80px; }
+  .shell { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
 
   /* brand */
   .brand { font-weight: 900; font-size: 1.05rem; letter-spacing: -0.4px; }
@@ -61,12 +61,6 @@
 
   /* big rotating hero */
   .bighero { margin: 64px 0 56px; position: relative; }
-  .pill {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--card); border: 1px solid rgba(255,255,255,0.1);
-    padding: 7px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 600; color: var(--muted); margin-bottom: 26px;
-  }
-  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--go); box-shadow: 0 0 10px var(--go); }
   .bighero h1 { font-size: clamp(2.5rem, 7.5vw, 5rem); font-weight: 900; line-height: 1.0; letter-spacing: -2px; }
   .grad { background: linear-gradient(120deg, var(--go), var(--acc)); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .bighero .sub { font-size: clamp(1.05rem, 1.5vw, 1.18rem); color: var(--muted); margin-top: 24px; max-width: 820px; }
@@ -96,7 +90,7 @@
   .barlabel { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin: 30px 0 14px; font-weight: 700; }
   .toggles { display: flex; flex-wrap: wrap; gap: 10px; }
   .toggle {
-    font-size: 0.86rem; font-weight: 700; padding: 9px 16px; border-radius: 0;
+    font-size: 0.86rem; font-weight: 700; padding: 10px 16px; border-radius: 0;
     border: 2px solid var(--ink); background: transparent; color: var(--ink);
     cursor: pointer; transition: transform 0.08s, background 0.15s, color 0.15s, box-shadow 0.15s;
     display: inline-flex; align-items: center; gap: 8px; user-select: none;
@@ -148,7 +142,7 @@
   .proj.locked { opacity: 0.5; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); border-color: var(--muted); }
   .proj.almost { border-color: var(--warn); box-shadow: 4px 4px 0 var(--warn); opacity: 1; }
 
-  footer { margin-top: 70px; color: var(--muted); font-size: 0.82rem; border-top: 2px solid var(--ink); padding-top: 18px; }
+  footer { margin-top: 72px; color: var(--muted); font-size: 0.82rem; border-top: 2px solid var(--ink); padding-top: 18px; }
   footer span { color: var(--accent); font-weight: 700; }
 
   /* download button per project */
@@ -210,8 +204,8 @@
     padding: 12px 0 4px;
   }
   .modal-panel-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: var(--muted);
     opacity: 0.35;
@@ -310,7 +304,7 @@
 
   /* ===== MOBILE: layout tightening + fullscreen modal (added 2026-06-19) ===== */
   @media (max-width: 600px) {
-    .shell { padding: 24px 16px 60px; }
+    .shell { padding: 24px 16px 64px; }
     .bighero { margin: 36px 0 36px; }
     .bighero h1 { letter-spacing: -1.2px; }
     .barlabel { margin: 24px 0 12px; }
