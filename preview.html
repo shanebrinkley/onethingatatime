@@ -15,6 +15,8 @@
     --go-soft: rgba(34,240,138,0.14);
     --miss: #d10000;      /* magenta = missing requirement */
     --miss-soft: rgba(209,0,0,0.14);
+    --warn: #FACC15;       /* neon yellow = caution / one tool away (per Color System.md) */
+    --warn-soft: rgba(250,204,21,0.14);
     --acc: #45d4ff;       /* light blue accent */
     --accent: #22f08a;    /* brand pop (green) */
   }
@@ -125,9 +127,11 @@
   }
   .stamp.ready { background: var(--go); color: #04250f; border-color: var(--go); }
   .stamp.locked { background: var(--bg); color: var(--muted); border-color: var(--muted); }
+  .stamp.almost { background: var(--warn); color: var(--bg); border-color: var(--warn); }
 
   .proj.ready { border-color: var(--go); box-shadow: 4px 4px 0 var(--go); }
   .proj.locked { opacity: 0.5; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); border-color: var(--muted); }
+  .proj.almost { border-color: var(--warn); box-shadow: 4px 4px 0 var(--warn); opacity: 1; }
 
   footer { margin-top: 70px; color: var(--muted); font-size: 0.82rem; border-top: 2px solid var(--ink); padding-top: 18px; }
   footer span { color: var(--accent); font-weight: 700; }
@@ -208,6 +212,10 @@
   .modal-warning .miss-icon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: var(--bg); color: var(--miss); border-radius: 50%; font-weight: 900; margin-right: 10px; font-size: 0.85rem; vertical-align: -5px; }
   .modal-warning strong { color: var(--bg); font-weight: 900; text-decoration: underline; }
   .modal-box.not-ready { box-shadow: 6px 6px 0 var(--miss); border-color: var(--miss); }
+  .modal-box.almost { box-shadow: 6px 6px 0 var(--warn); border-color: var(--warn); }
+  .modal-warning.almost { background: var(--warn); border-color: var(--warn); color: var(--bg); }
+  .modal-warning.almost .miss-icon { background: var(--bg); color: var(--warn); }
+  .modal-warning.almost strong { color: var(--bg); }
   .modal-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 4px 0 20px; padding: 14px 16px; background: var(--bg); border: 1.5px solid var(--muted); }
   .modal-meta-row { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .modal-meta-label { font-size: 0.65rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 700; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
@@ -481,7 +489,7 @@
 
   function statusOf(p) {
     const missing = p.req.filter(r => !selected.has(r));
-    return { missing, ready: missing.length === 0 };
+    return { missing, ready: missing.length === 0, almost: missing.length === 1 };
   }
 
   function render() {
@@ -500,10 +508,13 @@
     projects.forEach(p => {
       const { missing, ready } = statusOf(p);
       if (ready) readyN++;
+      const isAlmost = (selected.size > 0) && !ready && missing.length === 1;
       p.el.classList.toggle('ready', ready && selected.size>0);
-      p.el.classList.toggle('locked', !ready);
+      p.el.classList.toggle('almost', isAlmost);
+      p.el.classList.toggle('locked', !ready && !isAlmost);
       const stamp = p.el.querySelector('.stamp');
       if (ready) { stamp.className = 'stamp ready'; stamp.textContent = 'READY'; }
+      else if (isAlmost) { stamp.className = 'stamp almost'; stamp.textContent = 'ALMOST'; }
       else { stamp.className = 'stamp locked'; stamp.textContent = 'NEEDS ' + missing.length; }
       const reqs = p.el.querySelector('.reqs');
       reqs.innerHTML = p.req.map(r => {
@@ -571,24 +582,29 @@
       modalEls.diffBar.innerHTML = cells.join('');
     }
 
-    // ===== MODAL: not-ready state -- red border + outside warning banner =====
+    // ===== MODAL: three-state coloring per Color System.md (ready / almost / not-ready) =====
     const { missing, ready } = statusOf(p);
     const box = document.getElementById('modal-box');
     const warning = document.getElementById('modal-warning');
     const warnText = document.getElementById('modal-warning-text');
+    box.classList.remove('not-ready', 'almost');
+    warning.classList.remove('show', 'almost');
     if (!ready) {
-      box.classList.add('not-ready');
       const missingNames = missing.map(r => capLabel[r]);
       const list = missingNames.length === 1
         ? `<strong>${missingNames[0]}</strong>`
         : missingNames.slice(0, -1).map(n => `<strong>${n}</strong>`).join(', ') + ` and <strong>${missingNames[missingNames.length - 1]}</strong>`;
-      warnText.innerHTML = `Sorry, you need ${list} to use this. You're welcome to download it anyway.`;
+      if (missing.length === 1) {
+        box.classList.add('almost');
+        warning.classList.add('almost');
+        warnText.innerHTML = `Just one more thing -- add ${list} and you're ready to go.`;
+      } else {
+        box.classList.add('not-ready');
+        warnText.innerHTML = `Sorry, you need ${list} to use this. You're welcome to download it anyway.`;
+      }
       warning.classList.add('show');
-    } else {
-      box.classList.remove('not-ready');
-      warning.classList.remove('show');
     }
-    // ===== END MODAL: not-ready =====
+    // ===== END MODAL: three-state =====
 
     modalBackdrop.classList.add('open');
     lockBodyScroll();
