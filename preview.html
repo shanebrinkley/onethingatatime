@@ -18,6 +18,7 @@
     --warn: #FACC15;       /* neon yellow = caution / one tool away (per Color System.md) */
     --warn-soft: rgba(250,204,21,0.14);
     --acc: #45d4ff;       /* light blue accent */
+    --acc-soft: rgba(69,212,255,0.12);
     --accent: #22f08a;    /* brand pop (green) */
   }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -119,7 +120,7 @@
     color: var(--muted); background: var(--bg); letter-spacing: 0.3px;
   }
   .req.have { border-color: var(--go); color: var(--go); background: var(--go-soft); }
-  .req.need { border-color: var(--acc); color: var(--acc); background: rgba(69,212,255,0.12); }
+  .req.need { border-color: var(--acc); color: var(--acc); background: var(--acc-soft); }
 
   .stamp {
     position: absolute; top: 16px; right: 16px; font-size: 0.66rem; font-weight: 900;
@@ -348,7 +349,13 @@
   const words = ["life", "work", "your inbox", "money", "school", "tax season"];
   let wi = 0;
   const rw = document.querySelector('.rotate-word');
-  const dustColors = ['#22f08a', '#45d4ff', '#9fb6d6'];
+  // Dust colors pull from CSS tokens so they stay in sync with the brand palette (per Branding.md)
+  const __rootStyles = getComputedStyle(document.documentElement);
+  const dustColors = [
+    __rootStyles.getPropertyValue('--go').trim()    || '#22f08a',
+    __rootStyles.getPropertyValue('--acc').trim()   || '#45d4ff',
+    __rootStyles.getPropertyValue('--muted').trim() || '#8ba6cc'
+  ];
 
   function spawnDust(host, x, y) {
     const d = document.createElement('span');
