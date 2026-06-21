@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>onethingatatime.ai</title>
+<meta name="description" content="When everything competes for attention, it's easy to feel stuck. onethingatatime.ai helps you manage the unmanageable -- one thing at a time.">
+<meta name="theme-color" content="#07142b">
+<link rel="canonical" href="https://onethingatatime.ai/">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2307142b' rx='12'/%3E%3Ccircle cx='50' cy='50' r='22' fill='%2322f08a'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2307142b' rx='12'/%3E%3Ccircle cx='50' cy='50' r='22' fill='%2322f08a'/%3E%3C/svg%3E">
+<meta property="og:title" content="onethingatatime.ai">
+<meta property="og:description" content="When everything competes for attention, it's easy to feel stuck. onethingatatime.ai helps you manage the unmanageable.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://onethingatatime.ai/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="onethingatatime.ai">
+<meta name="twitter:description" content="When everything competes for attention, it's easy to feel stuck. onethingatatime.ai helps you manage the unmanageable.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
@@ -18,7 +30,7 @@
     --go-soft: rgba(34,240,138,0.14);
     --miss: #DF4444;      /* magenta = missing requirement */
     --miss-soft: rgba(223,68,68,0.14);
-    --warn: #FACC15;       /* neon yellow = caution / one tool away (per Color System.md) */
+    --warn: #FACC15;       /* neon yellow = caution / one tool away (per Branding.md) */
     --warn-soft: rgba(250,204,21,0.14);
     --acc: #45d4ff;       /* light blue accent */
     --acc-soft: rgba(69,212,255,0.12);
@@ -381,16 +393,28 @@
   }
   /* ===== END ACCESSIBILITY ===== */
 
+  /* ===== ACCESSIBILITY: keyboard focus indicators (added 2026-06-20 wash 3) ===== */
+  *:focus { outline: none; }
+  .skip-link:focus { top: 8px; outline: 2px solid var(--acc); }
+  button:focus-visible, .proj:focus-visible, .toggle:focus-visible, .dl-btn:focus-visible,
+  .modal-close:focus-visible, .modal-dl-btn:focus-visible, .modal-panel-dot:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(69,212,255,0.3);
+  }
+  /* ===== END ACCESSIBILITY: focus indicators ===== */
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
 <body>
-  <div class="shell">
+  <a href="#main" class="skip-link" style="position:absolute;top:-40px;left:8px;background:var(--acc);color:var(--bg);padding:8px 14px;text-decoration:none;font-weight:700;z-index:9999;">Skip to content</a>
+  <div class="shell" id="main">
     <div class="brand">onethingatatime<span class="dot">.ai</span></div>
 
     <div class="bighero">
       <h1>When <span class="rotator"><span class="rotate-word grad">life</span></span><br>gets crazy, just remember:<br><span class="grad">one thing at a time.</span></h1>
-      <p class="sub">When everything competes for attention, it's easy to feel stuck. OneThingAtATime.ai helps you manage the unmanageable.</p>
+      <p class="sub">When everything competes for attention, it's easy to feel stuck. onethingatatime.ai helps you manage the unmanageable.</p>
     </div>
 
     <div class="intro">
