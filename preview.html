@@ -180,33 +180,28 @@
   }
   /* ===== DETAIL MODAL: HORIZONTAL panels + sticky footer (revised 2026-06-20) ===== */
   /* Content scrolls left/right (one panel at a time) so the download button at the bottom never moves. */
+  /* Desktop: all 4 panels visible, stacked vertically inside modal-scroll, no overflow. */
   .modal-scroll {
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    overscroll-behavior: contain;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .modal-scroll::-webkit-scrollbar { display: none; }
-  .modal-panel {
-    flex: 0 0 100%;
-    min-width: 0;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    flex-direction: column;
+    overflow-x: hidden;
     overflow-y: auto;
+    gap: 16px;
+    overscroll-behavior: contain;
+  }
+  .modal-panel {
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow-y: visible;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
   }
   .modal-panel-dots {
     flex-shrink: 0;
-    display: flex;
+    display: none;       /* desktop hides dots; mobile re-enables via media query */
     gap: 8px;
     justify-content: center;
     padding: 12px 0 4px;
@@ -342,10 +337,25 @@
     .modal-warning { max-width: calc(100% - 24px); margin: 12px 12px 0; padding: 12px 14px; font-size: 0.85rem; border: 2px solid var(--miss); box-shadow: 4px 4px 0 rgba(0,0,0,0.35); flex-shrink: 0; }
     .modal-meta { flex-direction: column; align-items: stretch; gap: 14px; }
     .modal-meta-row { width: 100%; }
-    /* Detail Modal: horizontal swipe is desktop-only -- revert to vertical stack on mobile */
-    .modal-scroll { flex-direction: column; overflow-x: hidden; overflow-y: auto; scroll-snap-type: none; gap: 16px; }
-    .modal-panel { flex: 0 0 auto; overflow-y: visible; scroll-snap-align: none; box-sizing: border-box; }
-    .modal-panel-dots { display: none; }
+    /* Detail Modal: mobile uses horizontal panel swipe (desktop shows everything at once) */
+    .modal-scroll {
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      gap: 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .modal-scroll::-webkit-scrollbar { display: none; }
+    .modal-panel {
+      flex: 0 0 100%;
+      overflow-y: auto;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    .modal-panel-dots { display: flex; }
   }
   /* ===== END MOBILE: layout tightening ===== */
 
