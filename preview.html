@@ -178,21 +178,61 @@
     display: flex; flex-direction: column;
     max-height: 92vh;
   }
-  /* ===== DETAIL MODAL: scrollable middle + fixed footer (added 2026-06-19) ===== */
+  /* ===== DETAIL MODAL: HORIZONTAL panels + sticky footer (revised 2026-06-20) ===== */
+  /* Content scrolls left/right (one panel at a time) so the download button at the bottom never moves. */
   .modal-scroll {
     flex: 1 1 auto;
     min-height: 0;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     overscroll-behavior: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .modal-scroll::-webkit-scrollbar { display: none; }
+  .modal-panel {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+  .modal-panel-dots {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px 0 4px;
+  }
+  .modal-panel-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    opacity: 0.35;
+    transition: opacity 0.2s, background 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .modal-panel-dot.active {
+    background: var(--acc);
+    opacity: 1;
+    transform: scale(1.3);
   }
   .modal-footer {
     flex-shrink: 0;
-    margin-top: 16px;
+    margin-top: 8px;
     padding-top: 16px;
     border-top: 1.5px solid var(--muted);
   }
   .modal-footer .modal-dl-btn { margin-top: 0; }
-  /* ===== END DETAIL MODAL: scroll/footer ===== */
+  /* ===== END DETAIL MODAL: horizontal scroll/footer ===== */
   .modal-close {
     position: absolute; top: 10px; right: 10px;
     background: var(--bg); color: var(--ink); border: 2px solid var(--ink);
@@ -376,8 +416,11 @@
         <div class="ico" id="modal-ico"></div>
         <h2 id="modal-name"></h2>
       </div>
-      <div class="modal-scroll">
+      <div class="modal-scroll" id="modal-scroll">
+      <div class="modal-panel">
       <div class="modal-desc" id="modal-desc"></div>
+      </div>
+      <div class="modal-panel">
       <!-- ===== MODAL: cost + difficulty meta (redesigned 2026-06-20) ===== -->
       <div class="modal-meta">
         <div class="modal-meta-row">
@@ -401,13 +444,24 @@
         </div>
       </div>
       <!-- ===== END meta ===== -->
+      </div>
+      <div class="modal-panel">
       <div class="modal-images">
         <div class="modal-img"><span id="modal-img-1">&#128247;</span><span class="modal-img-label">Example 1</span></div>
         <div class="modal-img"><span id="modal-img-2">&#9889;</span><span class="modal-img-label">Workflow</span></div>
         <div class="modal-img"><span id="modal-img-3">&#128202;</span><span class="modal-img-label">Output</span></div>
       </div>
+      </div>
+      <div class="modal-panel">
       <div class="modal-reqs-label">// Required tools</div>
       <div class="modal-reqs" id="modal-reqs"></div>
+      </div>
+      </div>
+      <div class="modal-panel-dots" id="modal-panel-dots">
+        <span class="modal-panel-dot active" data-panel="0" aria-label="Panel 1"></span>
+        <span class="modal-panel-dot" data-panel="1" aria-label="Panel 2"></span>
+        <span class="modal-panel-dot" data-panel="2" aria-label="Panel 3"></span>
+        <span class="modal-panel-dot" data-panel="3" aria-label="Panel 4"></span>
       </div>
       <div class="modal-footer">
       <button class="modal-dl-btn" id="modal-dl">Download starter ZIP</button>
@@ -688,6 +742,7 @@
 
     modalBackdrop.classList.add('open');
     lockBodyScroll();
+    if (typeof resetModalScroll === 'function') resetModalScroll();
   }
   function closeModal() {
     modalBackdrop.classList.remove('open');
@@ -712,6 +767,24 @@
     document.body.style.right = '';
     document.body.style.width = '';
     window.scrollTo(0, __savedScrollY);
+  }
+  // Detail Modal horizontal panel tracking -- updates active dot on scroll, supports tap-to-jump
+  const modalScrollEl = document.getElementById('modal-scroll');
+  const modalPanelDots = document.querySelectorAll('.modal-panel-dot');
+  if (modalScrollEl && modalPanelDots.length) {
+    modalScrollEl.addEventListener('scroll', () => {
+      const idx = Math.round(modalScrollEl.scrollLeft / modalScrollEl.clientWidth);
+      modalPanelDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }, { passive: true });
+    modalPanelDots.forEach((d, i) => {
+      d.addEventListener('click', () => {
+        modalScrollEl.scrollTo({ left: i * modalScrollEl.clientWidth, behavior: 'smooth' });
+      });
+    });
+  }
+  function resetModalScroll() {
+    if (modalScrollEl) modalScrollEl.scrollLeft = 0;
+    modalPanelDots.forEach((d, i) => d.classList.toggle('active', i === 0));
   }
   modalEls.close.onclick = closeModal;
   modalEls.dl.onclick = () => { if (modalProj) downloadProject(modalProj); };
