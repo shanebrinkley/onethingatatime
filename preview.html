@@ -266,6 +266,7 @@
   .diff-bar-cell:nth-child(8)  { background: var(--diff-8); }
   .diff-bar-cell:nth-child(9)  { background: var(--diff-9); }
   .diff-bar-cell:nth-child(10) { background: var(--diff-10); }
+  .diff-bar-cell.inactive { background: var(--bg2); }
   /* ===== END META PANEL redesign ===== */
   /* ===== END MODAL: not-ready warning + meta panel ===== */
 
@@ -650,8 +651,12 @@
     if (modalEls.cost) modalEls.cost.textContent = p.cost || 'Free';
     if (modalEls.difficulty && p.difficulty != null) {
       modalEls.difficulty.textContent = p.difficulty + ' / 10';
-      // Render all 10 cells uniformly (CSS nth-child colors them as the full gradient scale)
-      modalEls.diffBar.innerHTML = '<div class="diff-bar-cell"></div>'.repeat(10);
+      // Render 10 cells -- cells 1..N get their gradient color (CSS nth-child), cells N+1..10 marked .inactive (grayed slot)
+      const cells = [];
+      for (let i = 1; i <= 10; i++) {
+        cells.push('<div class="diff-bar-cell' + (i > p.difficulty ? ' inactive' : '') + '"></div>');
+      }
+      modalEls.diffBar.innerHTML = cells.join('');
       // Tint the difficulty number to match its position on the gradient
       const diffColor = getComputedStyle(document.documentElement).getPropertyValue('--diff-' + p.difficulty).trim();
       if (diffColor) modalEls.difficulty.style.color = diffColor;
