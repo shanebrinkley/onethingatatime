@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>onethingatatime.ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
 <style>
   :root {
     --bg: #07142b;        /* dark blue base */
@@ -13,8 +16,8 @@
     --muted: #8ba6cc;
     --go: #22f08a;        /* green = ready / available */
     --go-soft: rgba(34,240,138,0.14);
-    --miss: #d10000;      /* magenta = missing requirement */
-    --miss-soft: rgba(209,0,0,0.14);
+    --miss: #DF4444;      /* magenta = missing requirement */
+    --miss-soft: rgba(223,68,68,0.14);
     --warn: #FACC15;       /* neon yellow = caution / one tool away (per Color System.md) */
     --warn-soft: rgba(250,204,21,0.14);
     --acc: #45d4ff;       /* light blue accent */
@@ -25,11 +28,11 @@
     --diff-3:  #a2dd2e;
     --diff-4:  #c7d419;
     --diff-5:  #FACC15;
-    --diff-6:  #f2a311;
-    --diff-7:  #ea7a0d;
-    --diff-8:  #e25209;
-    --diff-9:  #da2904;
-    --diff-10: #d10000;
+    --diff-6:  #F5B11E;
+    --diff-7:  #EF9628;
+    --diff-8:  #EA7A31;
+    --diff-9:  #E45F3A;
+    --diff-10: #DF4444;
     --accent: #22f08a;    /* brand pop (green) */
   }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -43,7 +46,7 @@
   body {
     background: var(--bg);
     color: var(--ink);
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -66,7 +69,7 @@
   .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--go); box-shadow: 0 0 10px var(--go); }
   .bighero h1 { font-size: clamp(2.5rem, 7.5vw, 5rem); font-weight: 900; line-height: 1.0; letter-spacing: -2px; }
   .grad { background: linear-gradient(120deg, var(--go), var(--acc)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .bighero .sub { font-size: clamp(1.05rem, 2.5vw, 1.35rem); color: var(--muted); margin-top: 24px; max-width: 820px; }
+  .bighero .sub { font-size: clamp(1.05rem, 1.5vw, 1.18rem); color: var(--muted); margin-top: 24px; max-width: 820px; }
 
   .rotator { display: inline-block; position: relative; }
   .rotate-word { display: inline-block; animation: wordIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -87,7 +90,7 @@
   /* mechanic intro */
   .intro h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: -0.8px; }
   .intro h2 u { text-decoration: none; color: var(--acc); }
-  .intro p { color: var(--muted); font-size: 1.05rem; max-width: 820px; margin-top: 12px; }
+  .intro p { color: var(--muted); font-size: clamp(1.05rem, 1.5vw, 1.18rem); max-width: 820px; margin-top: 12px; }
 
   /* capability bar */
   .barlabel { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin: 30px 0 14px; font-weight: 700; }
@@ -180,33 +183,28 @@
   }
   /* ===== DETAIL MODAL: HORIZONTAL panels + sticky footer (revised 2026-06-20) ===== */
   /* Content scrolls left/right (one panel at a time) so the download button at the bottom never moves. */
+  /* Desktop: all 4 panels visible, stacked vertically inside modal-scroll, no overflow. */
   .modal-scroll {
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    overscroll-behavior: contain;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .modal-scroll::-webkit-scrollbar { display: none; }
-  .modal-panel {
-    flex: 0 0 100%;
-    min-width: 0;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    flex-direction: column;
+    overflow-x: hidden;
     overflow-y: auto;
+    gap: 16px;
+    overscroll-behavior: contain;
+  }
+  .modal-panel {
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow-y: visible;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
   }
   .modal-panel-dots {
     flex-shrink: 0;
-    display: flex;
+    display: none;       /* desktop hides dots; mobile re-enables via media query */
     gap: 8px;
     justify-content: center;
     padding: 12px 0 4px;
@@ -342,10 +340,25 @@
     .modal-warning { max-width: calc(100% - 24px); margin: 12px 12px 0; padding: 12px 14px; font-size: 0.85rem; border: 2px solid var(--miss); box-shadow: 4px 4px 0 rgba(0,0,0,0.35); flex-shrink: 0; }
     .modal-meta { flex-direction: column; align-items: stretch; gap: 14px; }
     .modal-meta-row { width: 100%; }
-    /* Detail Modal: horizontal swipe is desktop-only -- revert to vertical stack on mobile */
-    .modal-scroll { flex-direction: column; overflow-x: hidden; overflow-y: auto; scroll-snap-type: none; gap: 16px; }
-    .modal-panel { flex: 0 0 auto; overflow-y: visible; scroll-snap-align: none; box-sizing: border-box; }
-    .modal-panel-dots { display: none; }
+    /* Detail Modal: mobile uses horizontal panel swipe (desktop shows everything at once) */
+    .modal-scroll {
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      gap: 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .modal-scroll::-webkit-scrollbar { display: none; }
+    .modal-panel {
+      flex: 0 0 100%;
+      overflow-y: auto;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    .modal-panel-dots { display: flex; }
   }
   /* ===== END MOBILE: layout tightening ===== */
 
@@ -402,7 +415,7 @@
     <div class="grid" id="grid"></div>
 
     <footer>
-      Built by <span>Shane Brinkley</span> — one thing at a time. &copy; 2026 onethingatatime.ai
+      Built by <span>Shane Brinkley</span> -- one thing at a time. &copy; 2026 onethingatatime.ai
       <div class="updated">Last updated: 6/19/26</div>
     </footer>
   </div>
@@ -556,11 +569,11 @@
   // ===== 9 sample projects with their required tools =====
   // ===== PROJECT DATA: each entry has ico, name, desc, req tools, cost, difficulty (1-10) =====
   const projects = [
-    { ico:'🎙️', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you — built on modular templates you control.', req:['claude','plaud','gmail'], cost:'Plaud device $249 (one-time) + ~$2-5/mo API', difficulty:3 },
+    { ico:'🎙️', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you -- built on modular templates you control.', req:['claude','plaud','gmail'], cost:'Plaud device $249 (one-time) + ~$2-5/mo API', difficulty:3 },
     { ico:'💬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'], cost:'~$1-5/mo (Twilio per-SMS) + Zapier free tier', difficulty:2 },
     { ico:'📥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'], cost:'~$5-15/mo (Claude API, varies by inbox volume)', difficulty:4 },
     { ico:'🕸️', name:'Always-On Scraper', desc:'Runs around the clock on your own machine, collecting what you tell it to.', req:['minipc','claude'], cost:'Mini PC $150-300 (one-time) + ~$5/mo API', difficulty:6 },
-    { ico:'📝', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap — same swappable templates.', req:['claude','readai','gmail'], cost:'Read.ai $15-30/mo + ~$2/mo API', difficulty:3 },
+    { ico:'📝', name:'Read.ai Recap Mailer', desc:'Takes your Read.ai meeting notes, summarizes them your way, and auto-emails the recap -- same swappable templates.', req:['claude','readai','gmail'], cost:'Read.ai $15-30/mo + ~$2/mo API', difficulty:3 },
     { ico:'🗂️', name:'Auto-File Organizer', desc:'Watches a folder and sorts new files into place automatically.', req:['gdrive','minipc'], cost:'Free (Drive free tier + your Mini PC)', difficulty:5 },
     { ico:'🏠', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'], cost:'IFTTT $3-5/mo, Zapier free-$20/mo', difficulty:2 },
     { ico:'📆', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gdrive','zapier'], cost:'~$5/mo (Claude API + free tools)', difficulty:4 },
@@ -663,7 +676,7 @@
     document.getElementById('readyCount').textContent = readyN;
     const hint = document.getElementById('hint');
     if (selected.size === 0) hint.textContent = 'Select your tools above to unlock projects.';
-    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet — add another tool.';
+    else if (readyN === 0) hint.textContent = 'Nothing fully unlocked yet -- add another tool.';
     else hint.textContent = 'These are ready to run with what you have.';
 
     // FLIP animation only on desktop -- on mobile cards just snap into place
