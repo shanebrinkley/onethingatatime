@@ -169,6 +169,17 @@
   /* updated line */
   .updated { margin-top: 6px; font-size: 0.7rem; color: var(--muted); opacity: 0.7; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
 
+  /* ===== FOOTER META ROW: live time + visitor counter (added 2026-06-21) ===== */
+  .meta-row {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px;
+    font-size: 0.7rem;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  .meta-row .updated { margin-top: 0; opacity: 0.7; }
+  .meta-row .live-time { color: var(--acc); opacity: 0.9; }
+  .meta-row .visitors { color: var(--go); opacity: 1; }
+  /* ===== END FOOTER META ROW ===== */
+
 
   /* clickable card cursor */
   .proj { cursor: pointer; }
@@ -434,7 +445,11 @@
 
     <footer>
       Built by <span>Shane Brinkley</span> -- one thing at a time. &copy; 2026 onethingatatime.ai
-      <div class="updated">Last updated: 6/19/26</div>
+      <div class="meta-row">
+        <span class="updated">Last updated 6/21/26</span>
+        <span class="live-time" id="liveClock">--</span>
+        <span class="visitors" id="visitorCount">visitors --</span>
+      </div>
     </footer>
   </div>
 
@@ -841,6 +856,34 @@
   });
 
   render();
+</script>
+<script>
+  // ===== LIVE CLOCK + VISITOR COUNTER (added 2026-06-21) =====
+  (function(){
+    function pad(n){ return String(n).padStart(2, '0'); }
+    var clockEl = document.getElementById('liveClock');
+    function tick(){
+      if (!clockEl) return;
+      var d = new Date();
+      clockEl.textContent = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+    }
+    tick();
+    setInterval(tick, 1000);
+    var visEl = document.getElementById('visitorCount');
+    if (visEl) {
+      fetch('https://api.counterapi.dev/v1/onethingatatime/visits/up')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(j){
+          if (j && typeof j.count === 'number') {
+            visEl.textContent = 'visitors ' + j.count.toLocaleString();
+          } else {
+            visEl.textContent = '';
+          }
+        })
+        .catch(function(){ visEl.textContent = ''; });
+    }
+  })();
+  // ===== END LIVE CLOCK + VISITOR COUNTER =====
 </script>
 </body>
 </html>
