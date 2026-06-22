@@ -684,6 +684,7 @@
     projects.forEach(p => first.set(p.el, p.el.getBoundingClientRect()));
 
     const order = projects.slice().sort((a,b) => {
+      if (selected.size === 0 && (!!a.preferred !== !!b.preferred)) return a.preferred ? -1 : 1;
       const ma = statusOf(a).missing.length, mb = statusOf(b).missing.length;
       if ((ma===0) !== (mb===0)) return ma===0 ? -1 : 1;
       if (ma !== mb) return ma - mb;
