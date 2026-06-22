@@ -426,7 +426,7 @@
     <div class="toggles" id="toggles"></div>
 
     <div class="statusline">
-      <div class="count mono"><b id="readyCount">0</b> / 8 ready</div>
+      <div class="count mono"><b id="readyCount">0</b> / 9 ready</div>
       <div class="hint" id="hint">Select your tools above to unlock projects.</div>
     </div>
 
@@ -581,12 +581,15 @@
     { id: 'gmail',   label: 'Gmail' },
     { id: 'gdrive',  label: 'Google Drive' },
     { id: 'ifttt',   label: 'IFTTT' },
+    { id: 'github',  label: 'GitHub' },
+    { id: 'godaddy', label: 'GoDaddy' },
   ];
   const capLabel = Object.fromEntries(capabilities.map(c => [c.id, c.label]));
 
   // ===== 9 sample projects with their required tools =====
   // ===== PROJECT DATA: each entry has ico, name, desc, req tools, cost, difficulty (1-10) =====
   const projects = [
+    { ico:'🌐', name:'Website Builder', desc:'An always-on agent that writes, previews, and ships your site. Tell it what to change, it stages a preview, you give the word and it goes live.', req:['claude','github','godaddy'], cost:'~$5/mo Claude API + GoDaddy ~$20/yr', difficulty:7, preferred:true },
     { ico:'🎙️', name:'Plaud Recap Mailer', desc:'Turns your Plaud voice recordings into a clean summary and auto-emails it to you -- built on modular templates you control.', req:['claude','plaud','gmail'], cost:'Plaud device $249 (one-time) + ~$2-5/mo API', difficulty:3 },
     { ico:'💬', name:'SMS Reminder Bot', desc:'Texts you (or a client) reminders on a schedule. No app to open.', req:['twilio','zapier'], cost:'~$1-5/mo (Twilio per-SMS) + Zapier free tier', difficulty:2 },
     { ico:'📥', name:'Inbox Triage', desc:'Reads your inbox, sorts what matters, drafts the replies you approve.', req:['claude','gmail'], cost:'~$5-15/mo (Claude API, varies by inbox volume)', difficulty:4 },
@@ -667,7 +670,7 @@
       const ma = statusOf(a).missing.length, mb = statusOf(b).missing.length;
       if ((ma===0) !== (mb===0)) return ma===0 ? -1 : 1;
       if (ma !== mb) return ma - mb;
-      return a.idx - b.idx;
+      return (Math.max(0, 1 - selected.size * 0.34) * (((b.preferred?1:0) - (a.preferred?1:0)) * 1000)) + (a.idx - b.idx);
     });
     order.forEach(p => grid.appendChild(p.el));
 
