@@ -178,6 +178,7 @@
   .meta-row .updated { margin-top: 0; opacity: 0.7; }
   .meta-row .live-time { color: var(--acc); opacity: 0.9; }
   .meta-row .visitors { color: var(--go); opacity: 1; }
+  .meta-row .visitors.owner { color: var(--muted); opacity: 0.55; }
   /* ===== END FOOTER META ROW ===== */
 
 
@@ -871,16 +872,38 @@
     setInterval(tick, 1000);
     var visEl = document.getElementById('visitorCount');
     if (visEl) {
-      fetch('https://api.counterapi.dev/v1/onethingatatime/visits/up')
-        .then(function(r){ return r.ok ? r.json() : null; })
-        .then(function(j){
-          if (j && typeof j.count === 'number') {
-            visEl.textContent = 'visitors ' + j.count.toLocaleString();
-          } else {
-            visEl.textContent = '';
-          }
-        })
-        .catch(function(){ visEl.textContent = ''; });
+      // Owner exclusion -- visit /?owner=1 once to opt out of counter increments on this browser
+      var OWNER_KEY = 'ota_owner';
+      try {
+        var u = new URL(window.location.href);
+        if (u.searchParams.get('owner') === '1') {
+          localStorage.setItem(OWNER_KEY, '1');
+          u.searchParams.delete('owner');
+          window.history.replaceState({}, '', u.pathname + (u.search || '') + u.hash);
+        }
+        if (u.searchParams.get('owner') === '0') {
+          localStorage.removeItem(OWNER_KEY);
+          u.searchParams.delete('owner');
+          window.history.replaceState({}, '', u.pathname + (u.search || '') + u.hash);
+        }
+      } catch (e) {}
+      var isOwner = false;
+      try { isOwner = localStorage.getItem(OWNER_KEY) === '1'; } catch (e) {}
+      if (isOwner) {
+        visEl.classList.add('owner');
+        visEl.textContent = 'visitors -- (owner)';
+      } else {
+        fetch('https://api.counterapi.dev/v1/onethingatatime/visits/up')
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(j){
+            if (j && typeof j.count === 'number') {
+              visEl.textContent = 'visitors ' + j.count.toLocaleString();
+            } else {
+              visEl.textContent = '';
+            }
+          })
+          .catch(function(){ visEl.textContent = ''; });
+      }
     }
   })();
   // ===== END LIVE CLOCK + VISITOR COUNTER =====
