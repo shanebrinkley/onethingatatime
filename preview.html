@@ -438,7 +438,7 @@
     <div class="toggles" id="toggles"></div>
 
     <div class="statusline">
-      <div class="count mono"><b id="readyCount">0</b> / 9 ready</div>
+      <div class="count mono"><b id="readyCount">0</b> / 10 ready</div>
       <div class="hint" id="hint">Select your tools above to unlock projects.</div>
     </div>
 
@@ -615,6 +615,7 @@
     { ico:'🗂️', name:'Auto-File Organizer', desc:'Watches a folder and uses AI to sort new files into place automatically.', req:['claude','gdrive','minipc'], cost:'Free (Drive free tier + your Mini PC)', difficulty:5 },
     { ico:'🏠', name:'Smart Home Trigger', desc:'Connects everyday triggers to actions across your apps and devices.', req:['ifttt','zapier'], cost:'IFTTT $3-5/mo, Zapier free-$20/mo', difficulty:2 },
     { ico:'📆', name:'Calendar Concierge', desc:'Drafts your day, files the docs, and keeps your schedule honest.', req:['claude','gcal','gdrive','zapier'], cost:'~$5/mo (Claude API + free tools)', difficulty:4 },
+    { ico:'🧳', name:'Vacation Concierge', desc:'Tell it the trip basics. It builds the timeline, sends invites, manages packing lists, and chases the million sub-tasks for you.', req:['claude','gmail','gcal','gdrive','zapier'], cost:'~$15-25/mo (Zapier starter + Claude API + free Google Workspace)', difficulty:7 },
   ];
   projects.forEach((p,i) => p.idx = i);
 
